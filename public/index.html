@@ -5,33 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bootcamp Feedback Dashboard</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 20px; }
-        h1 { text-align: center; color: #1a73e8; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
-        .controls { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: #fafafa; border-bottom: 1px solid #ddd; }
-        button { background-color: #1a73e8; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #1557b0; }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; padding: 20px; }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
         
-        /* Clean Table Layout */
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { background-color: #f8f9fa; padding: 12px 15px; border-bottom: 2px solid #ddd; color: #555; }
-        td { padding: 12px 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
-        tr:hover { background-color: #f1f3f4; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); overflow: hidden; }
         
-        .student-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd; }
-        .feedback-text { max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        /* Header Controls */
+        .controls { display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #fff; border-bottom: 2px solid #f0f0f0; }
+        .page-tag { background: #eef2f7; color: #555; padding: 5px 12px; border-radius: 20px; font-size: 0.9em; font-weight: bold; }
+        
+        button { background-color: #3498db; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+        button:hover { background-color: #2980b9; }
+        button:disabled { background-color: #e0e0e0; color: #999; cursor: not-allowed; }
+
+        /* TABLE DESIGN - The Magic Happens Here */
+        table { width: 100%; border-collapse: collapse; }
+        
+        /* Column Widths: Force Name/Roll to be small, Feedback to be huge */
+        th:nth-child(1) { width: 5%; }  /* Photo */
+        th:nth-child(2) { width: 15%; } /* Name */
+        th:nth-child(3) { width: 15%; } /* Roll No */
+        th:nth-child(4) { width: 65%; } /* Feedback gets the most space! */
+
+        th { background-color: #f8f9fa; text-align: left; padding: 15px; color: #888; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        tr:hover { background-color: #fbfbfb; }
+
+        /* Small & Subtle Styles for Info */
+        .student-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
+        .student-name { font-weight: 700; color: #333; font-size: 0.95em; }
+        .student-roll { color: #888; font-size: 0.85em; font-family: monospace; background: #f5f5f5; padding: 2px 6px; border-radius: 4px; }
+
+        /* BIG & BOLD Style for Feedback */
+        .feedback-text { 
+            font-size: 1.1em; 
+            color: #2c3e50; 
+            line-height: 1.5; 
+            font-style: italic; 
+            background-color: #fdfdfd;
+            border-left: 4px solid #3498db; /* Blue accent bar */
+            padding: 10px 15px;
+            border-radius: 0 4px 4px 0;
+        }
     </style>
 </head>
 <body>
 
-    <h1>KIET Bootcamp by AIKARYASHALA</h1>
+    <h1>🚀 KIET Bootcamp Feedback</h1>
 
     <div class="container">
         <div class="controls">
-            <strong>Student Feedback Data</strong>
+            <span class="page-tag" id="page-info">Page 1</span>
             <div>
-                <span id="page-info" style="margin-right: 15px;">Page 1</span>
                 <button id="prev-btn" disabled>Previous</button>
                 <button id="next-btn">Next</button>
             </div>
@@ -43,7 +68,7 @@
                     <th>Photo</th>
                     <th>Full Name</th>
                     <th>Roll Number</th>
-                    <th>Experience / Feedback</th>
+                    <th>Feedback</th>
                 </tr>
             </thead>
             <tbody id="table-body">
@@ -55,32 +80,36 @@
         let currentPage = 1;
 
         async function loadData(page) {
-            const response = await fetch(`/api/students?page=${page}`);
-            const students = await response.json();
-            
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = ''; 
-
-            document.getElementById('next-btn').disabled = students.length < 10;
-            document.getElementById('prev-btn').disabled = page === 1;
-            document.getElementById('page-info').innerText = `Page ${page}`;
-
-            students.forEach(student => {
-                const tr = document.createElement('tr');
+            try {
+                const response = await fetch(`/api/students?page=${page}`);
+                const students = await response.json();
                 
-                // EXACT GITHUB URL LINKED HERE!
-                // If a photo isn't on GitHub yet, 'onerror' makes a colorful initial avatar instead.
-                tr.innerHTML = `
-                    <td>
-                        <img class="student-img"
-                              src={"https://raw.githubusercontent.com/aikaryashala/certificates/main/docs/bootcamp/kiet/assets/student_images/AIK${student.roll_number.toUpperCase()}.jpg"}       
-                    </td>
-                    <td><strong>${student.full_name}</strong></td>
-                    <td>${student.roll_number}</td>
-                    <td class="feedback-text" title="${student.feedback}">${student.feedback}</td>
-                `;
-                tbody.appendChild(tr);
-            });
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = ''; 
+
+                document.getElementById('next-btn').disabled = students.length < 10;
+                document.getElementById('prev-btn').disabled = page === 1;
+                document.getElementById('page-info').innerText = `Page ${page}`;
+
+                students.forEach(student => {
+                    const tr = document.createElement('tr');
+                    
+                    // NOTE: Kept your Safe Link Logic with 'AIK' and uppercase!
+                    tr.innerHTML = `
+                        <td>
+                            <img class="student-img" 
+                                 src="https://raw.githubusercontent.com/aikaryashala/certificates/main/docs/bootcamp/kiet/assets/student_images/AIK${student.roll_number.toUpperCase()}.jpg" 
+                                 onerror="this.src='https://ui-avatars.com/api/?name=${student.full_name}&background=random&color=fff'">
+                        </td>
+                        <td><div class="student-name">${student.full_name}</div></td>
+                        <td><span class="student-roll">${student.roll_number}</span></td>
+                        <td><div class="feedback-text">"${student.feedback}"</div></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Failed to load data", err);
+            }
         }
 
         document.getElementById('next-btn').addEventListener('click', () => { currentPage++; loadData(currentPage); });
