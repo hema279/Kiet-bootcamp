@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootcamp Feedback Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 20px; }
+        h1 { text-align: center; color: #1a73e8; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
+        .controls { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: #fafafa; border-bottom: 1px solid #ddd; }
+        button { background-color: #1a73e8; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #1557b0; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        /* Clean Table Layout */
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: #f8f9fa; padding: 12px 15px; border-bottom: 2px solid #ddd; color: #555; }
+        td { padding: 12px 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        tr:hover { background-color: #f1f3f4; }
+        
+        .student-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd; }
+        .feedback-text { max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    </style>
+</head>
+<body>
+
+    <h1>KIET Bootcamp by AIKARYASHALA</h1>
+
+    <div class="container">
+        <div class="controls">
+            <strong>Student Feedback Data</strong>
+            <div>
+                <span id="page-info" style="margin-right: 15px;">Page 1</span>
+                <button id="prev-btn" disabled>Previous</button>
+                <button id="next-btn">Next</button>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Full Name</th>
+                    <th>Roll Number</th>
+                    <th>Experience / Feedback</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        let currentPage = 1;
+
+        async function loadData(page) {
+            const response = await fetch(`/api/students?page=${page}`);
+            const students = await response.json();
+            
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = ''; 
+
+            document.getElementById('next-btn').disabled = students.length < 10;
+            document.getElementById('prev-btn').disabled = page === 1;
+            document.getElementById('page-info').innerText = `Page ${page}`;
+
+            students.forEach(student => {
+                const tr = document.createElement('tr');
+                
+                // EXACT GITHUB URL LINKED HERE!
+                // If a photo isn't on GitHub yet, 'onerror' makes a colorful initial avatar instead.
+                tr.innerHTML = `
+                    <td>
+                        <img class="student-img"
+                              src={"https://raw.githubusercontent.com/aikaryashala/certificates/main/docs/bootcamp/kiet/assets/student_images/AIK${student.roll_number.toUpperCase()}.jpg"}       
+                    </td>
+                    <td><strong>${student.full_name}</strong></td>
+                    <td>${student.roll_number}</td>
+                    <td class="feedback-text" title="${student.feedback}">${student.feedback}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('next-btn').addEventListener('click', () => { currentPage++; loadData(currentPage); });
+        document.getElementById('prev-btn').addEventListener('click', () => { if (currentPage > 1) { currentPage--; loadData(currentPage); } });
+
+        loadData(currentPage);
+    </script>
+</body>
+</html>
