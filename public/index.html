@@ -3,119 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootcamp Feedback Dashboard</title>
+    <title>KIET Bootcamp Wall of Love</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; padding: 20px; }
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
-        
-        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); overflow: hidden; }
-        
-        /* Header Controls */
-        .controls { display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #fff; border-bottom: 2px solid #f0f0f0; }
-        .page-tag { background: #eef2f7; color: #555; padding: 5px 12px; border-radius: 20px; font-size: 0.9em; font-weight: bold; }
-        
-        button { background-color: #3498db; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
-        button:hover { background-color: #2980b9; }
-        button:disabled { background-color: #e0e0e0; color: #999; cursor: not-allowed; }
-
-        /* TABLE DESIGN - The Magic Happens Here */
-        table { width: 100%; border-collapse: collapse; }
-        
-        /* Column Widths: Force Name/Roll to be small, Feedback to be huge */
-        th:nth-child(1) { width: 5%; }  /* Photo */
-        th:nth-child(2) { width: 15%; } /* Name */
-        th:nth-child(3) { width: 15%; } /* Roll No */
-        th:nth-child(4) { width: 65%; } /* Feedback gets the most space! */
-
-        th { background-color: #f8f9fa; text-align: left; padding: 15px; color: #888; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; }
-        td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
-        tr:hover { background-color: #fbfbfb; }
-
-        /* Small & Subtle Styles for Info */
-        .student-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
-        .student-name { font-weight: 700; color: #333; font-size: 0.95em; }
-        .student-roll { color: #888; font-size: 0.85em; font-family: monospace; background: #f5f5f5; padding: 2px 6px; border-radius: 4px; }
-
-        /* BIG & BOLD Style for Feedback */
-        .feedback-text { 
-            font-size: 1.1em; 
-            color: #2c3e50; 
-            line-height: 1.5; 
-            font-style: italic; 
-            background-color: #fdfdfd;
-            border-left: 4px solid #3498db; /* Blue accent bar */
-            padding: 10px 15px;
-            border-radius: 0 4px 4px 0;
+        /* DARK THEME VARIABLES */
+        :root {
+            --bg-color: #0f172a;       /* Deep Blue-Black */
+            --card-bg: #1e293b;        /* Lighter Blue-Grey */
+            --text-main: #f1f5f9;      /* White-ish */
+            --text-muted: #94a3b8;     /* Grey */
+            --accent-blue: #38bdf8;    /* Cyan */
+            --pos-color: #22c55e;      /* Green */
+            --neg-color: #ef4444;      /* Red */
+            --neu-color: #eab308;      /* Yellow */
         }
+
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-color); color: var(--text-main); padding: 40px 20px; margin: 0; }
+
+        /* HEADER */
+        .header { text-align: center; margin-bottom: 50px; }
+        h1 { font-size: 2.5em; margin: 0; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { color: var(--text-muted); margin-top: 10px; font-size: 1.1em; }
+
+        /* CONTROLS BAR */
+        .controls-container { max-width: 1200px; margin: 0 auto 40px auto; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        
+        .search-box { 
+            padding: 15px 25px; 
+            width: 100%; 
+            max-width: 400px; 
+            background: var(--card-bg); 
+            border: 1px solid #334155; 
+            border-radius: 50px; 
+            color: white; 
+            font-size: 1em; 
+            outline: none; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+        .search-box:focus { border-color: var(--accent-blue); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+
+        .pagination { display: flex; align-items: center; gap: 10px; background: var(--card-bg); padding: 8px 20px; border-radius: 50px; border: 1px solid #334155; }
+        button { background: var(--accent-blue); color: #0f172a; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; transition: 0.2s; }
+        button:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3); }
+
+        /* GRID LAYOUT (The Wall of Love) */
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+            gap: 25px; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
+
+        /* CARD DESIGN */
+        .card { 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            padding: 25px; 
+            position: relative; 
+            border: 1px solid #334155; 
+            transition: transform 0.2s, box-shadow 0.2s; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+        }
+        
+        .card:hover { transform: translateY(-5px); }
+        
+        /* Card Glows based on sentiment */
+        .card.pos-glow:hover { box-shadow: 0 10px 30px -10px rgba(34, 197, 94, 0.3); border-color: var(--pos-color); }
+        .card.neg-glow:hover { box-shadow: 0 10px 30px -10px rgba(239, 68, 68, 0.3); border-color: var(--neg-color); }
+        .card.neu-glow:hover { box-shadow: 0 10px 30px -10px rgba(234, 179, 8, 0.3); border-color: var(--neu-color); }
+
+        /* Badge Positioned Top Right */
+        .badge { position: absolute; top: 20px; right: 20px; font-size: 0.75em; font-weight: 800; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-pos { background: rgba(34, 197, 94, 0.1); color: var(--pos-color); border: 1px solid rgba(34, 197, 94, 0.2); }
+        .badge-neg { background: rgba(239, 68, 68, 0.1); color: var(--neg-color); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .badge-neu { background: rgba(234, 179, 8, 0.1); color: var(--neu-color); border: 1px solid rgba(234, 179, 8, 0.2); }
+
+        /* Feedback Text */
+        .feedback { 
+            font-size: 1.1em; 
+            line-height: 1.6; 
+            color: var(--text-main); 
+            margin-bottom: 25px; 
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .quote-icon { font-size: 2em; color: #334155; position: absolute; top: 15px; left: 20px; opacity: 0.5; }
+
+        /* Student Footer */
+        .student-info { display: flex; align-items: center; border-top: 1px solid #334155; padding-top: 15px; margin-top: auto; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-color); margin-right: 15px; }
+        .name-block { display: flex; flex-direction: column; }
+        .name { font-weight: 700; color: white; font-size: 0.95em; }
+        .roll { font-size: 0.8em; color: var(--text-muted); font-family: monospace; }
+
     </style>
 </head>
 <body>
 
-    <h1>🚀 KIET Bootcamp Feedback</h1>
-
-    <div class="container">
-        <div class="controls">
-            <span class="page-tag" id="page-info">Page 1</span>
-            <div>
-                <button id="prev-btn" disabled>Previous</button>
-                <button id="next-btn">Next</button>
-            </div>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Photo</th>
-                    <th>Full Name</th>
-                    <th>Roll Number</th>
-                    <th>Feedback</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-                </tbody>
-        </table>
+    <div class="header">
+        <h1>What Our Students Say</h1>
+        <div class="subtitle">Real feedback from the KIET Bootcamp 2026</div>
     </div>
 
+    <div class="controls-container">
+        <input type="text" id="search-input" class="search-box" placeholder="🔍 Find a student...">
+        
+        <div class="pagination">
+            <button id="prev-btn">Prev</button>
+            <span id="page-info" style="color: var(--text-muted); font-size: 0.9em; min-width: 80px; text-align: center;">Page 1</span>
+            <button id="next-btn">Next</button>
+        </div>
+    </div>
+
+    <div class="grid-container" id="card-grid">
+        </div>
+
     <script>
+        let allData = [];
+        let filteredData = [];
         let currentPage = 1;
+        const cardsPerPage = 9; // 3x3 Grid looks best
 
-        async function loadData(page) {
-            try {
-                const response = await fetch(`/api/students?page=${page}`);
-                const students = await response.json();
-                
-                const tbody = document.getElementById('table-body');
-                tbody.innerHTML = ''; 
-
-                document.getElementById('next-btn').disabled = students.length < 10;
-                document.getElementById('prev-btn').disabled = page === 1;
-                document.getElementById('page-info').innerText = `Page ${page}`;
-
-                students.forEach(student => {
-                    const tr = document.createElement('tr');
-                    
-                    // NOTE: Kept your Safe Link Logic with 'AIK' and uppercase!
-                    tr.innerHTML = `
-                        <td>
-                            <img class="student-img" 
-                                 src="https://raw.githubusercontent.com/aikaryashala/certificates/main/docs/bootcamp/kiet/assets/student_images/AIK${student.roll_number.toUpperCase()}.jpg" 
-                                 onerror="this.src='https://ui-avatars.com/api/?name=${student.full_name}&background=random&color=fff'">
-                        </td>
-                        <td><div class="student-name">${student.full_name}</div></td>
-                        <td><span class="student-roll">${student.roll_number}</span></td>
-                        <td><div class="feedback-text">"${student.feedback}"</div></td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch (err) {
-                console.error("Failed to load data", err);
-            }
+        // 1. Fetch Data
+        async function init() {
+            // Ensure backend has LIMIT 600
+            const res = await fetch('/api/students?page=1');
+            allData = await res.json();
+            filteredData = allData;
+            renderGrid();
         }
 
-        document.getElementById('next-btn').addEventListener('click', () => { currentPage++; loadData(currentPage); });
-        document.getElementById('prev-btn').addEventListener('click', () => { if (currentPage > 1) { currentPage--; loadData(currentPage); } });
+        // 2. Render Grid
+        function renderGrid() {
+            const grid = document.getElementById('card-grid');
+            grid.innerHTML = '';
 
-        loadData(currentPage);
+            const start = (currentPage - 1) * cardsPerPage;
+            const end = start + cardsPerPage;
+            const pageData = filteredData.slice(start, end);
+
+            const totalPages = Math.ceil(filteredData.length / cardsPerPage) || 1;
+            document.getElementById('page-info').innerText = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prev-btn').disabled = currentPage === 1;
+            document.getElementById('next-btn').disabled = currentPage >= totalPages;
+
+            pageData.forEach(student => {
+                const sentiment = analyzeSentiment(student.feedback);
+                
+                // Card HTML
+                const card = document.createElement('div');
+                card.className = `card ${sentiment.glowClass}`; // Add dynamic glow class
+                
+                card.innerHTML = `
+                    <div class="quote-icon">“</div>
+                    <span class="badge ${sentiment.badgeClass}">${sentiment.label}</span>
+                    
+                    <div class="feedback">
+                        ${student.feedback.length > 150 ? student.feedback.substring(0, 150) + '...' : student.feedback}
+                    </div>
+
+                    <div class="student-info">
+                        <img class="avatar" 
+                             src="https://raw.githubusercontent.com/aikaryashala/certificates/main/docs/bootcamp/kiet/assets/student_images/AIK${student.roll_number.toUpperCase()}.jpg" 
+                             onerror="this.src='https://ui-avatars.com/api/?name=${student.full_name}&background=random&color=fff'">
+                        <div class="name-block">
+                            <span class="name">${student.full_name}</span>
+                            <span class="roll">${student.roll_number}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 3. Sentiment Logic
+        function analyzeSentiment(text) {
+            const t = text.toLowerCase();
+            if (t.includes('good') || t.includes('excellent') || t.includes('nice') || t.includes('best') || t.includes('great') || t.includes('super')) {
+                return { label: 'Positive', badgeClass: 'badge-pos', glowClass: 'pos-glow' };
+            } else if (t.includes('bad') || t.includes('waste') || t.includes('worst') || t.includes('nothing') || t.includes('poor')) {
+                return { label: 'Negative', badgeClass: 'badge-neg', glowClass: 'neg-glow' };
+            }
+            return { label: 'Neutral', badgeClass: 'badge-neu', glowClass: 'neu-glow' };
+        }
+
+        // 4. Search Logic
+        document.getElementById('search-input').addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase();
+            filteredData = allData.filter(s => 
+                s.full_name.toLowerCase().includes(term) || 
+                s.roll_number.toLowerCase().includes(term)
+            );
+            currentPage = 1;
+            renderGrid();
+        });
+
+        document.getElementById('next-btn').onclick = () => { currentPage++; renderGrid(); };
+        document.getElementById('prev-btn').onclick = () => { currentPage--; renderGrid(); };
+
+        init();
     </script>
 </body>
 </html>
