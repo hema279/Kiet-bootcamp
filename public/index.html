@@ -5,101 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KIET Bootcamp Wall of Love</title>
     <style>
-        /* DARK THEME VARIABLES */
         :root {
-            --bg-color: #0f172a;       /* Deep Blue-Black */
-            --card-bg: #1e293b;        /* Lighter Blue-Grey */
-            --text-main: #f1f5f9;      /* White-ish */
-            --text-muted: #94a3b8;     /* Grey */
-            --accent-blue: #38bdf8;    /* Cyan */
-            --pos-color: #22c55e;      /* Green */
-            --neg-color: #ef4444;      /* Red */
-            --neu-color: #eab308;      /* Yellow */
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent-blue: #38bdf8;
+            --pos-color: #22c55e;
+            --neg-color: #ef4444;
+            --neu-color: #eab308;
         }
 
-        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-color); color: var(--text-main); padding: 40px 20px; margin: 0; }
-
-        /* HEADER */
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); padding: 40px 20px; margin: 0; }
+        
         .header { text-align: center; margin-bottom: 50px; }
         h1 { font-size: 2.5em; margin: 0; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subtitle { color: var(--text-muted); margin-top: 10px; font-size: 1.1em; }
+        .subtitle { color: var(--text-muted); margin-top: 10px; }
 
-        /* CONTROLS BAR */
-        .controls-container { max-width: 1200px; margin: 0 auto 40px auto; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .controls-container { max-width: 1200px; margin: 0 auto 40px auto; display: flex; gap: 20px; justify-content: center; align-items: center; flex-wrap: wrap; }
         
-        .search-box { 
-            padding: 15px 25px; 
-            width: 100%; 
-            max-width: 400px; 
-            background: var(--card-bg); 
-            border: 1px solid #334155; 
-            border-radius: 50px; 
-            color: white; 
-            font-size: 1em; 
-            outline: none; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: 0.3s;
-        }
-        .search-box:focus { border-color: var(--accent-blue); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+        .search-box { padding: 12px 25px; width: 300px; background: var(--card-bg); border: 1px solid #334155; border-radius: 50px; color: white; outline: none; }
 
-        .pagination { display: flex; align-items: center; gap: 10px; background: var(--card-bg); padding: 8px 20px; border-radius: 50px; border: 1px solid #334155; }
-        button { background: var(--accent-blue); color: #0f172a; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; transition: 0.2s; }
+        .pagination { display: flex; align-items: center; gap: 15px; }
+        button { background: var(--accent-blue); color: #0f172a; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
         button:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
-        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3); }
 
-        /* GRID LAYOUT (The Wall of Love) */
-        .grid-container { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
-            gap: 25px; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-        }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
 
-        /* CARD DESIGN */
-        .card { 
-            background: var(--card-bg); 
-            border-radius: 16px; 
-            padding: 25px; 
-            position: relative; 
-            border: 1px solid #334155; 
-            transition: transform 0.2s, box-shadow 0.2s; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between;
-        }
+        .card { background: var(--card-bg); border-radius: 16px; padding: 25px; border: 1px solid #334155; position: relative; transition: 0.3s; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
+
+        .badge { position: absolute; top: 20px; right: 20px; font-size: 0.7em; font-weight: bold; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; }
+        .badge-pos { background: rgba(34, 197, 94, 0.1); color: var(--pos-color); }
+        .badge-neg { background: rgba(239, 68, 68, 0.1); color: var(--neg-color); }
+        .badge-neu { background: rgba(234, 179, 8, 0.1); color: var(--neu-color); }
+
+        .feedback { font-style: italic; line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
         
-        .card:hover { transform: translateY(-5px); }
-        
-        /* Card Glows based on sentiment */
-        .card.pos-glow:hover { box-shadow: 0 10px 30px -10px rgba(34, 197, 94, 0.3); border-color: var(--pos-color); }
-        .card.neg-glow:hover { box-shadow: 0 10px 30px -10px rgba(239, 68, 68, 0.3); border-color: var(--neg-color); }
-        .card.neu-glow:hover { box-shadow: 0 10px 30px -10px rgba(234, 179, 8, 0.3); border-color: var(--neu-color); }
+        .student-info { display: flex; align-items: center; border-top: 1px solid #334155; padding-top: 15px; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; margin-right: 15px; border: 2px solid var(--accent-blue); }
+        .name { font-weight: bold; display: block; }
+        .roll { font-size: 0.8em; color: var(--text-muted); }
 
-        /* Badge Positioned Top Right */
-        .badge { position: absolute; top: 20px; right: 20px; font-size: 0.75em; font-weight: 800; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .badge-pos { background: rgba(34, 197, 94, 0.1); color: var(--pos-color); border: 1px solid rgba(34, 197, 94, 0.2); }
-        .badge-neg { background: rgba(239, 68, 68, 0.1); color: var(--neg-color); border: 1px solid rgba(239, 68, 68, 0.2); }
-        .badge-neu { background: rgba(234, 179, 8, 0.1); color: var(--neu-color); border: 1px solid rgba(234, 179, 8, 0.2); }
-
-        /* Feedback Text */
-        .feedback { 
-            font-size: 1.1em; 
-            line-height: 1.6; 
-            color: var(--text-main); 
-            margin-bottom: 25px; 
-            margin-top: 10px;
-            font-style: italic;
-        }
-        .quote-icon { font-size: 2em; color: #334155; position: absolute; top: 15px; left: 20px; opacity: 0.5; }
-
-        /* Student Footer */
-        .student-info { display: flex; align-items: center; border-top: 1px solid #334155; padding-top: 15px; margin-top: auto; }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-color); margin-right: 15px; }
-        .name-block { display: flex; flex-direction: column; }
-        .name { font-weight: 700; color: white; font-size: 0.95em; }
-        .roll { font-size: 0.8em; color: var(--text-muted); font-family: monospace; }
-
+        #status-msg { text-align: center; font-size: 1.2em; color: var(--accent-blue); margin-top: 50px; }
     </style>
 </head>
 <body>
@@ -110,34 +58,56 @@
     </div>
 
     <div class="controls-container">
-        <input type="text" id="search-input" class="search-box" placeholder="🔍 Find a student...">
-        
+        <input type="text" id="search-input" class="search-box" placeholder="🔍 Search Name or Roll No...">
         <div class="pagination">
             <button id="prev-btn">Prev</button>
-            <span id="page-info" style="color: var(--text-muted); font-size: 0.9em; min-width: 80px; text-align: center;">Page 1</span>
+            <span id="page-info">Page 1</span>
             <button id="next-btn">Next</button>
         </div>
     </div>
 
-    <div class="grid-container" id="card-grid">
-        </div>
+    <div id="status-msg">Loading reviews...</div>
+    <div class="grid-container" id="card-grid"></div>
 
     <script>
         let allData = [];
         let filteredData = [];
         let currentPage = 1;
-        const cardsPerPage = 9; // 3x3 Grid looks best
+        const cardsPerPage = 9;
 
-        // 1. Fetch Data
         async function init() {
-            // Ensure backend has LIMIT 600
-            const res = await fetch('/api/students?page=1');
-            allData = await res.json();
-            filteredData = allData;
-            renderGrid();
+            const statusMsg = document.getElementById('status-msg');
+            try {
+                // FIXED: Using relative path for Vercel deployment
+                const res = await fetch('/api/students');
+                if (!res.ok) throw new Error('Backend failed to respond');
+                
+                allData = await res.json();
+                filteredData = allData;
+                
+                if (allData.length === 0) {
+                    statusMsg.innerText = "No data found in the database.";
+                } else {
+                    statusMsg.style.display = 'none';
+                    renderGrid();
+                }
+            } catch (err) {
+                console.error(err);
+                statusMsg.innerText = "Error: Could not connect to the database. Check Vercel Logs.";
+                statusMsg.style.color = "red";
+            }
         }
 
-        // 2. Render Grid
+        function analyzeSentiment(text) {
+            const t = text.toLowerCase();
+            if (t.includes('good') || t.includes('excellent') || t.includes('great') || t.includes('best')) {
+                return { label: 'Positive', cls: 'badge-pos' };
+            } else if (t.includes('bad') || t.includes('worst') || t.includes('waste')) {
+                return { label: 'Negative', cls: 'badge-neg' };
+            }
+            return { label: 'Neutral', cls: 'badge-neu' };
+        }
+
         function renderGrid() {
             const grid = document.getElementById('card-grid');
             grid.innerHTML = '';
@@ -151,28 +121,18 @@
             document.getElementById('prev-btn').disabled = currentPage === 1;
             document.getElementById('next-btn').disabled = currentPage >= totalPages;
 
-            pageData.forEach(student => {
-                const sentiment = analyzeSentiment(student.feedback);
-                
-                // Card HTML
+            pageData.forEach(s => {
+                const sentiment = analyzeSentiment(s.feedback);
                 const card = document.createElement('div');
-                card.className = `card ${sentiment.glowClass}`; // Add dynamic glow class
-                
+                card.className = 'card';
                 card.innerHTML = `
-                    <div class="quote-icon">“</div>
-                    <span class="badge ${sentiment.badgeClass}">${sentiment.label}</span>
-                    
-                    <div class="feedback">
-                        ${student.feedback.length > 150 ? student.feedback.substring(0, 150) + '...' : student.feedback}
-                    </div>
-
+                    <span class="badge ${sentiment.cls}">${sentiment.label}</span>
+                    <div class="feedback">"${s.feedback}"</div>
                     <div class="student-info">
-                        <img class="avatar" 
-                             src="https://raw.githubusercontent.com/aikaryashala/certificates/main/docs/bootcamp/kiet/assets/student_images/AIK${student.roll_number.toUpperCase()}.jpg" 
-                             onerror="this.src='https://ui-avatars.com/api/?name=${student.full_name}&background=random&color=fff'">
-                        <div class="name-block">
-                            <span class="name">${student.full_name}</span>
-                            <span class="roll">${student.roll_number}</span>
+                        <img class="avatar" src="https://raw.githubusercontent.com/aikaryashala/certificates/main/docs/bootcamp/kiet/assets/student_images/AIK${s.roll_number.toUpperCase()}.jpg" onerror="this.src='https://ui-avatars.com/api/?name=${s.full_name}'">
+                        <div>
+                            <span class="name">${s.full_name}</span>
+                            <span class="roll">${s.roll_number}</span>
                         </div>
                     </div>
                 `;
@@ -180,19 +140,7 @@
             });
         }
 
-        // 3. Sentiment Logic
-        function analyzeSentiment(text) {
-            const t = text.toLowerCase();
-            if (t.includes('good') || t.includes('excellent') || t.includes('nice') || t.includes('best') || t.includes('great') || t.includes('super')) {
-                return { label: 'Positive', badgeClass: 'badge-pos', glowClass: 'pos-glow' };
-            } else if (t.includes('bad') || t.includes('waste') || t.includes('worst') || t.includes('nothing') || t.includes('poor')) {
-                return { label: 'Negative', badgeClass: 'badge-neg', glowClass: 'neg-glow' };
-            }
-            return { label: 'Neutral', badgeClass: 'badge-neu', glowClass: 'neu-glow' };
-        }
-
-        // 4. Search Logic
-        document.getElementById('search-input').addEventListener('keyup', (e) => {
+        document.getElementById('search-input').addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
             filteredData = allData.filter(s => 
                 s.full_name.toLowerCase().includes(term) || 
@@ -202,8 +150,8 @@
             renderGrid();
         });
 
-        document.getElementById('next-btn').onclick = () => { currentPage++; renderGrid(); };
         document.getElementById('prev-btn').onclick = () => { currentPage--; renderGrid(); };
+        document.getElementById('next-btn').onclick = () => { currentPage++; renderGrid(); };
 
         init();
     </script>
